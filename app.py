@@ -4,19 +4,19 @@ import numpy as np
 import pickle
 
 
-st.set_page_config(page_title="Campaign Predictor", layout="wide")
+st.set_page_config(page_title="Campaign Predictor",layout="wide")
 st.title("📧 Campaign Response Predictor")
 st.write("Upload your customer list and predict who will respond to your marketing campaign.")
 
 
 @st.cache_resource
 def load_model():
-    model=pickle.load(open('model.pkl', 'rb'))
-    scaler=pickle.load(open('scaler.pkl', 'rb'))
-    features=pickle.load(open('features.pkl', 'rb'))
+    model=pickle.load(open('model.pkl','rb'))
+    scaler=pickle.load(open('scaler.pkl','rb'))
+    features=pickle.load(open('features.pkl','rb'))
     return model, scaler, features
 
-model, scaler, FEATURES=load_model()
+model,scaler,FEATURES=load_model()
 
 
 st.sidebar.header("📋 How to Use")
@@ -40,7 +40,7 @@ st.write("Your CSV must have these exact columns:")
 
 template=pd.DataFrame(columns=FEATURES)
 template.loc[0]=[45, 65000, 15, 1200, 2, 3, 8, 17]
-st.dataframe(template, use_container_width=True)
+st.dataframe(template,use_container_width=True)
 
 csv_template=template.to_csv(index=False)
 st.download_button(
@@ -68,7 +68,7 @@ if uploaded_file is not None:
     missing=[col for col in FEATURES if col not in df.columns]
     
     if missing:
-        st.error(f"❌ Missing columns: {', '.join(missing)}")
+        st.error(f"❌ Missing columns:{', '.join(missing)}")
         st.info("Please add these columns. Use the template above.")
     else:
         st.success("✅ All required columns found!")
@@ -96,18 +96,18 @@ if uploaded_file is not None:
             st.success("✅ Prediction complete!")
             
             
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3=st.columns(3)
             with col1:
-                st.metric("Total Customers", len(df))
+                st.metric("Total Customers",len(df))
             with col2:
-                st.metric("Likely to Respond", f"{df['Will_Respond'].sum()} ({df['Will_Respond'].mean():.0%})")
+                st.metric("Likely to Respond",f"{df['Will_Respond'].sum()} ({df['Will_Respond'].mean():.0%})")
             with col3:
-                st.metric("Recommended to Skip", f"{(df['Will_Respond']==0).sum()} ({(df['Will_Respond']==0).mean():.0%})")
+                st.metric("Recommended to Skip",f"{(df['Will_Respond']==0).sum()} ({(df['Will_Respond']==0).mean():.0%})")
             
             
             st.subheader("Results Preview (First 10 Customers)")
             display_cols = FEATURES[:3]+['Response_Probability','Recommendation']
-            st.dataframe(df[display_cols].head(10), use_container_width=True)
+            st.dataframe(df[display_cols].head(10),use_container_width=True)
             
             
             st.markdown("---")
